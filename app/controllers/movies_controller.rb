@@ -1,4 +1,11 @@
 class MoviesController < ApplicationController
+  def add_user_bookmark
+    b = Bookmark.new
+    b.user_id = params.fetch("the_user_id")
+    b.movie_id = params.fetch("the_movie_id")
+    b.save
+    redirect_to "/bookmarks", :notice => "Bookmarked movie"
+  end
   def index
     matching_movies = Movie.all
 
@@ -20,8 +27,11 @@ class MoviesController < ApplicationController
   def create
     the_movie = Movie.new
     the_movie.title = params.fetch("query_title")
-    the_movie.description = params.fetch("query_description")
+    the_movie.year = params.fetch("query_year")
+    the_movie.duration = params.fetch("query_duration")
     the_movie.director_id = params.fetch("query_director_id")
+    the_movie.description = params.fetch("query_description")
+    the_movie.image = params.fetch("query_image")
 
     if the_movie.valid?
       the_movie.save
@@ -30,20 +40,22 @@ class MoviesController < ApplicationController
       redirect_to("/movies", { :alert => the_movie.errors.full_messages.to_sentence })
     end
   end
-
   def update
     the_id = params.fetch("path_id")
     the_movie = Movie.where({ :id => the_id }).at(0)
 
     the_movie.title = params.fetch("query_title")
-    the_movie.description = params.fetch("query_description")
+    the_movie.year = params.fetch("query_year")
+    the_movie.duration = params.fetch("query_duration")
     the_movie.director_id = params.fetch("query_director_id")
+    the_movie.description = params.fetch("query_description")
+    the_movie.image = params.fetch("query_image")
 
     if the_movie.valid?
       the_movie.save
-      redirect_to("/movies/#{the_movie.id}", { :notice => "Movie updated successfully."} )
+      redirect_to("/movies/#{the_movie.id}", { :notice => "Movie updated successfully." })
     else
-      redirect_to("/movies/#{the_movie.id}", { :alert => the_movie.errors.full_messages.to_sentence })
+      redirect_to("/movies/#{the_movie.id}", { :alert => "Movie failed to update sucessfully." })
     end
   end
 
